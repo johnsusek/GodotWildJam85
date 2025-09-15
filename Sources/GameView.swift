@@ -18,7 +18,7 @@ struct GameView: GView {
   )
 
   var grid = SoilGrid(
-    size: GridSize(w: 20, h: 15),
+    size: GridSize(w: 20, h: 12),
     tileSize: 16,
     substrate: [],
     trunk: [],
@@ -32,11 +32,10 @@ struct GameView: GView {
       moisture: 100,
       nutrients: 100,
       enzymeCharges: 3,
-      tips: [],
+      tips: [.init(id: UUID(), gridPosition: GridPos(x: 10, y: 7), direction: .east, isReady: true, hasGrowableNeighbor: true)],
       enzymesKnown: Set<EnzymeTag>(),
       actionQueue: CommandQueue()
     )
-
 
     tileSet = ResourceLoader.load(path: "res://world_tileset.tres") as? TileSet
 
@@ -70,65 +69,67 @@ struct GameView: GView {
     )
 
     grid.trunk[7][10] = startingTile
-
-    // Add tips
-    colony.tips = [
-      .init(id: UUID(), gridPosition: GridPos(x: 10, y: 7), direction: .east, isReady: true, hasGrowableNeighbor: true)
-    ]
   }
 
   var body: some GView {
     return Node2D$ {
-      // draw soil tiles
-      TileMapLayer$()
-        .tileSet(tileSet)
-        .configure { tml in
-          for col in 0 ..< grid.size.w {
-            for row in 0 ..< grid.size.h {
-              if row > grid.substrate.count - 1 { continue }
-              if col > grid.substrate[row].count - 1 { continue }
+      // game container, shift down to make room for hud
+      Node2D$ {
+        // draw soil tiles
+        TileMapLayer$()
+          .tileSet(tileSet)
+          .configure { tml in
+            for col in 0 ..< grid.size.w {
+              for row in 0 ..< grid.size.h {
+                if row > grid.substrate.count - 1 { continue }
+                if col > grid.substrate[row].count - 1 { continue }
 
-              let substrate = grid.substrate[row][col]
+                let substrate = grid.substrate[row][col]
 
-              guard let atlasCoordsForType = tileSetRegistry.registry[substrate.kind.rawValue] else { continue }
-              guard let firstTile = atlasCoordsForType.first else { return }
+                guard let atlasCoordsForType = tileSetRegistry.registry[substrate.kind.rawValue] else { continue }
+                guard let firstTile = atlasCoordsForType.first else { return }
 
-              let coords = Vector2i(x: Int32(col), y: Int32(row))
+                let coords = Vector2i(x: Int32(col), y: Int32(row))
 
-              tml.setCell(
-                coords: coords,
-                sourceId: firstTile.sourceId,
-                atlasCoords: firstTile.atlasCoords
-              )
+                tml.setCell(
+                  coords: coords,
+                  sourceId: firstTile.sourceId,
+                  atlasCoords: firstTile.atlasCoords
+                )
+              }
             }
           }
-        }
 
-      // draw trunk tiles
-      TileMapLayer$()
-        .tileSet(tileSet)
-        .configure { tml in
-          for col in 0 ..< grid.size.w {
-            for row in 0 ..< grid.size.h {
-              if row > grid.trunk.count - 1 { continue }
-              if col > grid.trunk[row].count - 1 { continue }
-              guard let trunk = grid.trunk[row][col] else { continue }
-              guard let atlasCoordsForType = tileSetRegistry.registry[trunk.thickness.rawValue] else { continue }
-              guard let firstTile = atlasCoordsForType.first else { return }
+        // draw trunk tiles
+        TileMapLayer$()
+          .tileSet(tileSet)
+          .configure { tml in
+            for col in 0 ..< grid.size.w {
+              for row in 0 ..< grid.size.h {
+                if row > grid.trunk.count - 1 { continue }
+                if col > grid.trunk[row].count - 1 { continue }
+                guard let trunk = grid.trunk[row][col] else { continue }
+                guard let atlasCoordsForType = tileSetRegistry.registry[trunk.thickness.rawValue] else { continue }
+                guard let firstTile = atlasCoordsForType.first else { return }
 
-              let coords = Vector2i(x: Int32(col), y: Int32(row))
+                let coords = Vector2i(x: Int32(col), y: Int32(row))
 
-              tml.setCell(coords: coords, sourceId: firstTile.sourceId, atlasCoords: firstTile.atlasCoords)
+                tml.setCell(coords: coords, sourceId: firstTile.sourceId, atlasCoords: firstTile.atlasCoords)
+              }
             }
           }
-        }
 
-      // draw tips
-      for tip in colony.tips {
-        Sprite2D$()
-          .res(\.texture, "n.png")
-          .position(grid.toWorld(tip.gridPosition))
+        // draw tips
+        for tip in colony.tips {
+          Sprite2D$()
+            .res(\.texture, tip.direction.rawValue + ".png")
+            .position(grid.toWorld(tip.gridPosition))
+        }
       }
+      .position(Vector2(0, 16))
+
+      // HUD
+      HUDView(season: "Early Spring", moisture: colony.moisture, nutrients: colony.nutrients, tipsLeft: 2)
     }
   }
 }

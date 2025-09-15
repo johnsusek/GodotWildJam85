@@ -37,7 +37,7 @@ enum EnzymeTag {
   case chitinase // controls pests, weak on dense wood
 }
 
-enum CardinalDirection: CaseIterable { case north, south, east, west }
+enum CardinalDirection: String, CaseIterable { case north, south, east, west }
 
 enum VisibilityState { case undiscovered, remembered, visible }
 
