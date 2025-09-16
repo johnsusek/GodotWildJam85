@@ -2,17 +2,13 @@ import SwiftGodot
 import SwiftGodotBuilder
 
 struct HUDView: GView {
-  var season: String
+  var season: String = "Early Spring"
   var moisture: Int
   var nutrients: Int
   var tipsLeft: Int
 
   var body: some GView {
-    CanvasLayer$ {
-      Button$().text("Next Turn")
-        .anchors(.bottomRight)
-        .offsets(.bottomRight, margin: 2)
-
+    Control$ {
       Label$().text(season)
         .modulate(Color(code: "#EE1"))
         .anchors(.topLeft)

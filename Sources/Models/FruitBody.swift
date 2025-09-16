@@ -1,7 +1,7 @@
 import Foundation
 import SwiftGodotPatterns
 
-struct FruitBody: Hashable, Identifiable {
+struct FruitBody: Codable, Hashable, Identifiable {
   var id: UUID
   var gridPosition: GridPos
   var coveredTrunkCount: Int

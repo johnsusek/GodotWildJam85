@@ -2,7 +2,7 @@ import Foundation
 import SwiftGodot
 import SwiftGodotPatterns
 
-struct SoilGrid: Grid {
+struct SoilGrid: Codable, Grid {
   var size: GridSize
   var tileSize: Float
   var substrate: [[SubstrateTile]]
@@ -10,6 +10,31 @@ struct SoilGrid: Grid {
   var discovered: [[Bool]]
   var visible: [[Bool]]
   var fruitingSites: Set<FruitBody>
+
+  static func makeDefaultGrid() -> SoilGrid {
+    var grid = SoilGrid(
+      size: GridSize(w: 20, h: 12),
+      tileSize: GRID_UNIT,
+      substrate: [],
+      trunk: [],
+      discovered: [],
+      visible: [],
+      fruitingSites: Set<FruitBody>()
+    )
+
+    let soilTile = SubstrateTile(
+      kind: .soil,
+      nutrientValue: 1,
+      moistureCapacity: 1,
+      permeability: 1,
+      hazard: nil,
+      seenTurn: nil
+    )
+
+    grid.populate(with: soilTile)
+
+    return grid
+  }
 
   mutating func populate(with substrateTile: SubstrateTile) {
     // Populate grid.trunk arrays

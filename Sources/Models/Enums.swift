@@ -11,7 +11,7 @@
 // nutrient model - rot tiles
 // eat rot-adjacent tile produces N/turn
 
-enum SoilSubstrate: String {
+enum SoilSubstrate: String, Codable {
   case soil = "substrate.soil"
   case rot = "substrate.rot"
   case root = "substrate.root"
@@ -20,22 +20,19 @@ enum SoilSubstrate: String {
   case clay = "substrate.clay"
 }
 
-enum SoilHazardFlags { case none, bacteria, pest }
+enum SoilHazardFlags: Codable { case none, bacteria, pest }
 
-enum VisibilityState { case undiscovered, remembered, visible }
+enum VisibilityState: Codable { case undiscovered, remembered, visible }
 
-enum FruitBodyState { case growing, mature }
+enum FruitBodyState: Codable { case growing, mature }
 
-enum Thickness: String {
+enum Thickness: String, Codable {
   case thin = "trunk.thin"
   case thick = "trunk.thick"
 }
 
-enum EnzymeTag {
+enum EnzymeTag: Codable {
   case cellulase // good on wood/rot, weak vs pests
   case laccase // good on bark/root, boosts bacteria if overused (?)
   case chitinase // controls pests, weak on dense wood
 }
-
-enum CardinalDirection: String, CaseIterable { case north, south, east, west }
-

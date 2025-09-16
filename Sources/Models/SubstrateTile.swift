@@ -1,4 +1,4 @@
-struct SubstrateTile {
+struct SubstrateTile: Codable {
   var kind: SoilSubstrate
   var nutrientValue: Int // for rot
   var decayTimer: Int? // for rot

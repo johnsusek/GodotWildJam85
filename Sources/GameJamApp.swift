@@ -1,7 +1,7 @@
 import SwiftGodot
 import SwiftGodotBuilder
-import SwiftGodotPatterns
 import SwiftGodotKit
+import SwiftGodotPatterns
 import SwiftUI
 
 @main
@@ -28,13 +28,20 @@ struct GameJamApp: App {
     // These aren't in worldroot b/c they *aren't potentially needed every frame*
     // this should always separate our game classes & views/init data
     let tileSet = ResourceLoader.load(path: "res://world_tileset.tres") as? TileSet
-    let tileSetRegistry = TileSetRegistry()
     guard let tileSet else { fatalError("Tileset couldnt be loaded!") }
-    tileSetRegistry.build(from: tileSet)
+    Atlas.build(from: tileSet)
 
-    let worldRoot = WorldRoot()
-    worldRoot.populateGrid()
-    let view = GameView(worldRoot: worldRoot, tileSet: tileSet, tileSetRegistry: tileSetRegistry)
+    let gameModel = GameModel(
+      config: RunConfig.defaultConfig,
+      state: RunState(turn: 1, evaporationRate: 1, score: 0, outcome: .ongoing, selection: .none, tipsLeft: 0, seasonTurnsRemaining: 30),
+      grid: SoilGrid.makeDefaultGrid(),
+      colony: Colony.defaultColony,
+      pests: [],
+      rngSeed: UInt64(Date().timeIntervalSince1970)
+    )
+    let gameStore = GameStore(model: gameModel)
+
+    let view = GameView(gameStore: gameStore, tileSet: tileSet)
     let node = view.toNode()
 
     sceneTree.root?.addChild(node: node)
@@ -57,4 +64,3 @@ private func pollForSceneTree() async -> SceneTree {
   }
   fatalError("No scene tree or scene root - cannot continue!")
 }
-
