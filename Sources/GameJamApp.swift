@@ -1,5 +1,6 @@
 import SwiftGodot
 import SwiftGodotBuilder
+import SwiftGodotPatterns
 import SwiftGodotKit
 import SwiftUI
 
@@ -21,7 +22,19 @@ struct GameJamApp: App {
     await pollForAppInstance()
     let sceneTree = await pollForSceneTree()
 
-    let view = GameView()
+    GodotRegistry.append(contentsOf: [GInputRelay.self, WorldRoot.self])
+    GodotRegistry.flush()
+
+    // These aren't in worldroot b/c they *aren't potentially needed every frame*
+    // this should always separate our game classes & views/init data
+    let tileSet = ResourceLoader.load(path: "res://world_tileset.tres") as? TileSet
+    let tileSetRegistry = TileSetRegistry()
+    guard let tileSet else { fatalError("Tileset couldnt be loaded!") }
+    tileSetRegistry.build(from: tileSet)
+
+    let worldRoot = WorldRoot()
+    worldRoot.populateGrid()
+    let view = GameView(worldRoot: worldRoot, tileSet: tileSet, tileSetRegistry: tileSetRegistry)
     let node = view.toNode()
 
     sceneTree.root?.addChild(node: node)
@@ -44,3 +57,4 @@ private func pollForSceneTree() async -> SceneTree {
   }
   fatalError("No scene tree or scene root - cannot continue!")
 }
+

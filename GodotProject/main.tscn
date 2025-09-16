@@ -1,9 +1,3 @@
 [gd_scene format=3 uid="uid://dp8w2arwgtavw"]
 
 [node name="Node2D" type="Node2D"]
-
-[node name="Label" type="Label" parent="."]
-visible = false
-offset_right = 40.0
-offset_bottom = 11.0
-text = "Test 123"

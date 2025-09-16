@@ -18,14 +18,15 @@ struct HUDView: GView {
         .anchors(.topLeft)
         .offsets(.topLeft)
 
-      HBoxContainer$ {
-        Button$().text("> Extend")
-        Button$().text("> Extend")
-        Button$().text("> Branch")
-      }
-      .anchors(.bottomLeft)
-      .offset(top: -16 - 3, bottom: -2, left: 3)
-      .alignment(.begin)
+      // Action queue
+//      HBoxContainer$ {
+//        Button$().text("> Extend")
+//        Button$().text("> Extend")
+//        Button$().text("> Branch")
+//      }
+//      .anchors(.bottomLeft)
+//      .offset(top: -16 - 3, bottom: -2, left: 3)
+//      .alignment(.begin)
 
       HBoxContainer$ {
         Label$().text("\(tipsLeft) Tips")
