@@ -1,3 +1,6 @@
+import Foundation
+import SwiftGodotPatterns
+
 // Hard clock: Season, Soft clock: Evaporation (put these in HUD)
 
 // Resource models:
@@ -36,3 +39,4 @@ enum EnzymeTag: Codable {
   case laccase // good on bark/root, boosts bacteria if overused (?)
   case chitinase // controls pests, weak on dense wood
 }
+

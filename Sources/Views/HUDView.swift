@@ -8,7 +8,7 @@ struct HUDView: GView {
   var tipsLeft: Int
 
   var body: some GView {
-    Control$ {
+    CanvasLayer$ {
       Label$().text(season)
         .modulate(Color(code: "#EE1"))
         .anchors(.topLeft)

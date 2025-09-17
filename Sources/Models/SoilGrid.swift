@@ -80,3 +80,31 @@ func randomDirs() -> [GridPos] {
 
   return vs
 }
+
+struct FruitBody: Codable, Hashable, Identifiable {
+  var id: UUID
+  var gridPosition: GridPos
+  var coveredTrunkCount: Int
+  var plantedTurn: Int
+  var maturationTurns: Int
+  var state: FruitBodyState
+  var scoreValue: Int
+}
+
+struct SubstrateTile: Codable {
+  var kind: SoilSubstrate
+  var nutrientValue: Int // for rot
+  var decayTimer: Int? // for rot
+  var moistureCapacity: Int // for water
+  var permeability: Float // movement ease
+  var hazard: Set<SoilHazardFlags>?
+  var seenTurn: Int? // last fully visible turn
+}
+
+struct TrunkTile: Codable {
+  var thickness: Thickness
+  var integrityHp: Int
+  var leakFactor: Float // thin leaks more, clay reduces leak, hydrophic tag reduces leak
+  var enzymeTags: Set<EnzymeTag>
+  var builtTurn: Int
+}

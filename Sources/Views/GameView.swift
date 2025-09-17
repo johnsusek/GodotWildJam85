@@ -8,7 +8,6 @@ let GRID_UNIT: Float = 16.0
 struct GameView: GView {
   let gameStore: GameStore
   let tileSet: TileSet
-  let cursor = Ref<Sprite2D>()
   let worldRoot: WorldRoot
 
   var grid: SoilGrid? { gameStore.model.grid }
@@ -59,11 +58,11 @@ struct GameView: GView {
 
 //        TipsView(colony: worldRoot.colony, grid: worldRoot.grid)
 
-        // Sprite2D$()
-        //   .res(\.texture, "cursor.png")
-        //   .visible(false)
-        //   .position(worldRoot.grid.toWorld(GridPos(x: 0, y: 0)))
-        //   .ref(cursor)
+        Sprite2D$()
+          .res(\.texture, "cursor.png")
+          .visible(false)
+          .position(gameStore.model.grid.toWorld(GridPos(x: 0, y: 0)))
+          .ref(worldRoot.cursor)
       }
       .onMouse(.left, when: .released) { node, click in
         var newPos = click.position
@@ -84,7 +83,7 @@ struct GameView: GView {
         HUDView(
           moisture: gameStore.model.colony.moisture,
           nutrients: gameStore.model.colony.nutrients,
-          tipsLeft: gameStore.model.state.tipsLeft ?? 0
+          tipsLeft: gameStore.model.state.tipsLeft
         )
       }
     }
