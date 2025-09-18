@@ -1,25 +1,14 @@
 import SwiftGodot
 import SwiftGodotPatterns
 
-enum Content {
-  enum art {
-    static func placeSubstrate(_ t: SubstrateTile, at p: GridPos, in map: TileMapLayer) {
-      guard let entry = Atlas.pick(key: t.kind.rawValue) else { return }
-      map.setCell(
-        coords: p.toVector2i(),
-        sourceId: entry.sourceId,
-        atlasCoords: entry.atlasCoords
-      )
-    }
-
-    static func placeTrunk(_ t: TrunkTile, at p: GridPos, in map: TileMapLayer) {
-      guard let entry = Atlas.pick(key: t.thickness.rawValue) else { return }
-      map.setCell(
-        coords: p.toVector2i(),
-        sourceId: entry.sourceId,
-        atlasCoords: entry.atlasCoords
-      )
-    }
+enum Art {
+  static func placeSubstrate(_ t: Substrate, at p: GridPos, in map: TileMapLayer) {
+    guard let entry = Atlas.pick(key: t.kind.rawValue) else { return }
+    map.setCell(
+      coords: p.toVector2i(),
+      sourceId: entry.sourceId,
+      atlasCoords: entry.atlasCoords
+    )
   }
 }
 
@@ -30,11 +19,14 @@ struct AtlasEntry {
 
 class Atlas {
   static var registry: [String: [AtlasEntry]] = [:]
+  static var tileSets: Set<TileSet> = []
 
   // iterate through tileset tilesources (AtlasSources)
   // for each tile fetch TileData and ready custom_data
   // store in registry
   static func build(from tileSet: TileSet) {
+    tileSets.insert(tileSet)
+
     for sourceIndex in 0 ..< tileSet.getSourceCount() {
       let sourceId = tileSet.getSourceId(index: sourceIndex)
 
@@ -49,7 +41,6 @@ class Atlas {
               !key.isEmpty else { continue }
 
         registry[key, default: []].append(AtlasEntry(sourceId: sourceId, atlasCoords: tileCoords))
-        print("registered tileset custom data key: \(key)")
       }
     }
   }
